@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Kwality Walls Cornetto</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body {
+      background:#090303;
+      color:white;
+      overflow-x:hidden;
+      font-family:'Plus Jakarta Sans',sans-serif;
+    }
+
+    /* NAV */
+    .nav-bar {
+      position:fixed;
+      top:0; left:0;
+      width:100%;
+      z-index:100;
+      background:rgba(9,3,3,0.75);
+      backdrop-filter:blur(20px);
+      border-bottom:1px solid rgba(255,255,255,0.08);
+      padding:16px 8vw;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+    }
+    .nav-logo {
+      font-size:1.3rem;
+      font-weight:800;
+      background: linear-gradient(to right,#ffffff,#f2c898);
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+      letter-spacing:-0.02em;
+    }
+    .nav-links {
+      display:flex;
+      gap:32px;
+    }
+    .nav-links a {
+      color:rgba(255,255,255,0.7);
+      text-decoration:none;
+      font-weight:600;
+      font-size:0.95rem;
+      transition:0.25s ease;
+      cursor:pointer;
+      border:none;
+      background:none;
+    }
+    .nav-links a:hover {
+      color:#f0c794;
+    }
+    @media(max-width:768px){
+      .nav-links { gap:16px; }
+      .nav-links a { font-size:0.8rem; }
+      .nav-bar { padding:14px 5vw; }
+    }
+
+    /* HERO */
+    .hero {
+      position:relative;
+      height:500vh;
+      background: transparent;
+      margin-top:0;
+    }
+    .sticky {
+      position:sticky;
+      top:0;
+      width:100%;
+      height:100vh;
+      overflow:hidden;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+    canvas {
+      position:absolute;
+      top:0; left:0;
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      z-index:1;
+      filter: contrast(1.05) saturate(1.08);
+    }
+    canvas.canvas-fixed {
+      position: fixed !important;
+    }
+    .overlay {
+      position:relative;
+      z-index:10;
+      text-align:center;
+      margin-top:-260px;
+      padding:20px;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+      pointer-events:none;
+    }
+    .overlay h1 {
+      font-size:clamp(3rem,8vw,8rem);
+      line-height:0.95;
+      font-weight:800;
+      letter-spacing:-0.05em;
+      background: linear-gradient(to right,#ffffff,#f2c898);
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+      text-shadow: 0 0 40px rgba(255,255,255,0.15);
+      margin-bottom:24px;
+    }
+    .overlay p {
+      font-size:clamp(1rem,2vw,1.4rem);
+      color:rgba(255,255,255,0.85);
+      font-weight:500;
+      letter-spacing:0.02em;
+      text-shadow: 0 0 20px rgba(0,0,0,0.6);
+    }
+
+    /* SECTIONS */
+    .section {
+      position:relative;
+      z-index:20;
+      background:rgba(9,3,3,0.93);
+      padding:120px 8vw;
+    }
+    .section-title {
+      font-size:clamp(2.5rem,5vw,4.5rem);
+      line-height:1;
+      font-weight:800;
+      margin-bottom:30px;
+    }
+    .section-title span { color:#f0c794; }
+    .section-text {
+      max-width:900px;
+      color:rgba(255,255,255,0.72);
+      line-height:1.9;
+      font-size:1.1rem;
+    }
+    .cards {
+      margin-top:80px;
+      display:grid;
+      grid-template-columns: repeat(auto-fit,minmax(320px,1fr));
+      gap:30px;
+    }
+    .card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius:30px;
+      overflow:hidden;
+      transition:0.45s ease;
+      backdrop-filter:blur(20px);
+    }
+    .card:hover {
+      transform: translateY(-10px) scale(1.02);
+      border-color: rgba(255,255,255,0.18);
+      box-shadow: 0 25px 70px rgba(0,0,0,0.45);
+    }
+    .card img {
+      width:100%; height:300px;
+      object-fit:cover;
+      transition:0.5s ease;
+    }
+    .card:hover img { transform:scale(1.08); }
+    .card-content { padding:28px; }
+    .card h3 {
+      font-size:1.7rem;
+      margin-bottom:16px;
+      color:#f1c48f;
+    }
+    .card p {
+      color:rgba(255,255,255,0.72);
+      line-height:1.8;
+    }
+    .btn {
+      margin-top:70px;
+      display:inline-flex;
+      align-items:center;
+      gap:12px;
+      padding: 18px 34px;
+      border-radius:999px;
+      background:#f0c794;
+      color:#120707;
+      font-weight:700;
+      transition:0.35s ease;
+      cursor:pointer;
+      border:none;
+      font-size:1rem;
+    }
+    .btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 40px rgba(240,199,148,0.3);
+    }
+
+    /* FOOTER */
+    .footer {
+      position:relative;
+      z-index:20;
+      background:#090303;
+      border-top:1px solid rgba(255,255,255,0.08);
+      padding:100px 8vw 60px;
+    }
+    .footer-grid {
+      display:grid;
+      grid-template-columns: repeat(auto-fit,minmax(280px,1fr));
+      gap:50px;
+      max-width:1200px;
+    }
+    .footer h3 {
+      font-size:1.1rem;
+      font-weight:700;
+      color:#f0c794;
+      margin-bottom:20px;
+      letter-spacing:0.05em;
+      text-transform:uppercase;
+    }
+    .footer p, .footer a {
+      color:rgba(255,255,255,0.6);
+      line-height:1.9;
+      font-size:0.95rem;
+      text-decoration:none;
+      transition:0.25s ease;
+    }
+    .footer a:hover { color:#f0c794; }
+    .footer-bottom {
+      margin-top:80px;
+      padding-top:30px;
+      border-top:1px solid rgba(255,255,255,0.06);
+      text-align:center;
+      color:rgba(255,255,255,0.35);
+      font-size:0.85rem;
+    }
+
+    .hidden { display:none !important; }
+    @media(max-width:768px){
+      .hero { height:350vh; }
+      .overlay { margin-top:-180px; }
+      .section { padding:100px 24px; }
+      .footer { padding:80px 24px 40px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAVIGATION -->
+  <nav class="nav-bar">
+    <div class="nav-logo">Cornetto</div>
+    <div class="nav-links">
+      <a onclick="navigateTo('hero')">Home</a>
+      <a onclick="navigateTo('flavors')">Flavors</a>
+      <a onclick="navigateTo('why')">Why Us</a>
+      <a onclick="navigateTo('contact')">Contact</a>
+      <a onclick="openBuyOptions()">Buy Now</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero" id="hero-section">
+    <div class="sticky" id="hero-sticky">
+      <canvas id="hero-canvas"></canvas>
+      <div class="overlay" id="hero-overlay">
+        <h1>Kwality Walls Cornetto</h1>
+        <p>That perfect chocolate swirl of an ice cream</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- MAIN SECTION — FLAVORS -->
+  <section class="section" id="flavors-section">
+    <h2 class="section-title">Worth It for the <span>Price?</span></h2>
+    <p class="section-text">
+      Cornetto delivers a premium dessert experience with rich chocolate layers,
+      crunchy wafer textures, creamy swirls, and luxurious indulgence —
+      all designed to feel cinematic, modern, and irresistibly satisfying.
+    </p>
+    <div class="cards">
+      <div class="card">
+        <img src="./assets/A_Hyper-realistic_shot_of_this_202605211251.jpeg" alt="Chocolate Indulgence">
+        <div class="card-content">
+          <h3>Chocolate Indulgence</h3>
+          <p>Rich chocolate textures and silky swirls combine to create a luxurious dessert experience.</p>
+        </div>
+      </div>
+      <div class="card">
+        <img src="./assets/now_make_another_image_of_202605211258.jpeg" alt="Crispy Crunch">
+        <div class="card-content">
+          <h3>Crispy Crunch</h3>
+          <p>Every bite delivers satisfying crunch with premium cone textures and chocolate coating.</p>
+        </div>
+      </div>
+      <div class="card">
+        <img src="./assets/now_make_it_seem_like_202605211300.jpeg" alt="Premium Experience">
+        <div class="card-content">
+          <h3>Premium Experience</h3>
+          <p>Designed to feel like a luxury dessert advertisement with cinematic visuals and elegant presentation.</p>
+        </div>
+      </div>
+    </div>
+    <button onclick="openBuyOptions()" class="btn">Taste the Experience →</button>
+  </section>
+
+  <!-- WHY CHOOSE US -->
+  <section class="section" id="why-section">
+    <h2 class="section-title">Why <span>Choose Us</span></h2>
+    <p class="section-text">
+      Kwality Walls Cornetto Double Chocolate is loved for its creamy texture,
+      crunchy cone, rich chocolate layers, and affordable premium dessert
+      experience at approximately ₹40 in India.
+    </p>
+    <div class="cards">
+      <div class="card">
+        <img src="./assets/whychoose1.jpeg" alt="Quality Ingredients">
+        <div class="card-content">
+          <h3>Made with Quality Ingredients</h3>
+          <p>Crafted with creamy frozen dessert layers, chocolate coating, and crispy wafer cone textures for a rich dessert experience.</p>
+        </div>
+      </div>
+      <div class="card">
+        <img src="./assets/whychoose2.jpeg" alt="Chocolate Taste">
+        <div class="card-content">
+          <h3>Rich Chocolate Taste</h3>
+          <p>Double chocolate flavors combine creamy sweetness with crunchy textures for a satisfying bite every time.</p>
+        </div>
+      </div>
+      <div class="card">
+        <img src="./assets/whychoose3.jpeg" alt="Affordable Price">
+        <div class="card-content">
+          <h3>Affordable Premium Dessert</h3>
+          <p>Available for approximately ₹40, making it an accessible indulgence for chocolate lovers.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER / CONTACT -->
+  <footer class="footer" id="contact-section">
+    <div class="footer-grid">
+      <div>
+        <h3>Email</h3>
+        <p><a href="mailto:kwalitywalls.india@unilever.com">kwalitywalls.india@unilever.com</a></p>
+      </div>
+      <div>
+        <h3>Registered Office</h3>
+        <p>13th Floor, Oberoi Commerz II,<br>
+        International Business Park,<br>
+        Oberoi Garden City,<br>
+        Goregaon East, Mumbai 400 063.</p>
+      </div>
+      <div>
+        <h3>Telephone</h3>
+        <p><a href="tel:02245747000">022 45747000</a></p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      © Kwality Walls. All rights reserved.
+    </div>
+  </footer>
+
+  <!-- BUY MODAL -->
+  <div id="buy-modal" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-md flex items-center justify-center p-6">
+    <div class="bg-[#120707] border border-white/10 rounded-[30px] p-10 max-w-lg w-full text-center relative">
+      <button onclick="closeBuyOptions()" class="absolute top-5 right-5 text-white text-2xl hover:text-[#f0c794] transition">×</button>
+      <h2 class="text-4xl font-extrabold mb-4">Choose Your Store</h2>
+      <p class="text-white/70 mb-10">Buy Kwality Walls Cornetto Double Chocolate online</p>
+      <div class="grid gap-5">
+        <a href="https://www.bigbasket.com/pd/40062731/kwality-walls-cornetto-double-chocolate-frozen-dessert-105-ml/?nc=cl-prod-list&t_pos_sec=1&t_pos_item=8&t_s=Cornetto+Double+Chocolate" target="_blank" class="flex items-center justify-center gap-5 bg-white text-black rounded-2xl py-5 px-6 hover:scale-105 transition">
+          <img src="./assets/bigbasket.jpeg" alt="BigBasket" class="h-10 object-contain">
+          <span class="text-xl font-bold">BigBasket</span>
+        </a>
+        <a href="https://blinkit.com/prn/kwality-walls-cornetto-double-chocolate-frozen-dessert-cone/prid/450546?srsltid=AfmBOoq3xE1dOBWmQgbM_1qos3ERYXxXaPjxBAWUh555KJZVgMPkxyue" target="_blank" class="flex items-center justify-center gap-5 bg-[#f9e000] text-black rounded-2xl py-5 px-6 hover:scale-105 transition">
+          <img src="./assets/blinkit.jpeg" alt="Blinkit" class="h-10 object-contain">
+          <span class="text-xl font-bold">Blinkit</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // =====================================
+    // CONFIG
+    // =====================================
+    const FRAME_COUNT = 239;
+    const heroSection = document.getElementById('hero-section');
+    const heroSticky = document.getElementById('hero-sticky');
+    const canvas = document.getElementById('hero-canvas');
+    const ctx = canvas.getContext('2d');
+    const overlay = document.getElementById('hero-overlay');
+
+    let loadedCount = 0;
+    let allLoaded = false;
+    let lastFrameIndex = -1;
+    let isFixed = false;
+
+    // =====================================
+    // IMAGE LOADING
+    // =====================================
+    const images = [];
+
+    function getFrameUrl(index) {
+      return `./frames/ezgif-frame-${String(index + 1).padStart(3, '0')}.jpg`;
+    }
+
+    for (let i = 0; i < FRAME_COUNT; i++) {
+      const img = new Image();
+      img.onload = () => {
+        loadedCount++;
+        if (loadedCount === FRAME_COUNT) {
+          allLoaded = true;
+          handleScroll();
+        }
+      };
+      img.onerror = () => {
+        loadedCount++;
+        console.warn('Failed to load frame:', getFrameUrl(i));
+      };
+      img.src = getFrameUrl(i);
+      images.push(img);
+    }
+
+    // =====================================
+    // CANVAS SETUP
+    // =====================================
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      if (lastFrameIndex >= 0) {
+        drawFrame(lastFrameIndex);
+      }
+    }
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    // =====================================
+    // DRAW FRAME
+    // =====================================
+    function drawFrame(index) {
+      index = Math.max(0, Math.min(FRAME_COUNT - 1, Math.floor(index)));
+      lastFrameIndex = index;
+
+      let img = images[index];
+      if (!img || !img.complete || img.naturalWidth === 0) {
+        for (let j = index; j >= 0; j--) {
+          if (images[j] && images[j].complete && images[j].naturalWidth > 0) {
+            img = images[j];
+            break;
+          }
+        }
+      }
+      if (!img || !img.complete || img.naturalWidth === 0) {
+        for (let j = index; j < FRAME_COUNT; j++) {
+          if (images[j] && images[j].complete && images[j].naturalWidth > 0) {
+            img = images[j];
+            break;
+          }
+        }
+      }
+      if (!img || !img.complete || img.naturalWidth === 0) return;
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      const canvasRatio = canvas.width / canvas.height;
+      const imgRatio = img.naturalWidth / img.naturalHeight;
+
+      let drawWidth, drawHeight;
+      if (canvasRatio < imgRatio) {
+        drawHeight = canvas.height;
+        drawWidth = img.naturalWidth * (canvas.height / img.naturalHeight);
+      } else {
+        drawWidth = canvas.width;
+        drawHeight = img.naturalHeight * (canvas.width / img.naturalWidth);
+      }
+
+      const x = (canvas.width - drawWidth) / 2;
+      const y = (canvas.height - drawHeight) / 2;
+
+      ctx.drawImage(img, x, y, drawWidth, drawHeight);
+    }
+
+    // =====================================
+    // SCROLL HANDLER
+    // =====================================
+    let ticking = false;
+
+    function handleScroll() {
+      const heroHeight = heroSection.offsetHeight;
+      const viewportHeight = window.innerHeight;
+      const scrollTop = window.scrollY;
+      const maxScroll = heroHeight - viewportHeight;
+
+      let progress = 0;
+      if (maxScroll > 0) {
+        progress = Math.max(0, Math.min(1, scrollTop / maxScroll));
+      }
+
+      const frameIndex = progress * (FRAME_COUNT - 1);
+      drawFrame(frameIndex);
+
+      const fadePoint = Math.min(500, maxScroll * 0.3);
+      if (fadePoint > 0) {
+        const opacity = Math.max(0, 1 - Math.min(1, scrollTop / fadePoint));
+        overlay.style.opacity = opacity;
+        overlay.style.transform = `translateY(${scrollTop * 0.15}px)`;
+      }
+
+      if (progress >= 0.99) {
+        if (!isFixed) {
+          canvas.classList.add('canvas-fixed');
+          isFixed = true;
+        }
+      } else {
+        if (isFixed) {
+          canvas.classList.remove('canvas-fixed');
+          isFixed = false;
+        }
+      }
+
+      ticking = false;
+    }
+
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        requestAnimationFrame(handleScroll);
+        ticking = true;
+      }
+    });
+
+    handleScroll();
+
+    // =====================================
+    // NAVIGATION — simple scroll, no animation
+    // =====================================
+    function navigateTo(target) {
+      if (target === 'hero') {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        return;
+      }
+      const targetEl = document.getElementById(target + '-section');
+      if (targetEl) {
+        targetEl.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+
+    // =====================================
+    // BUY MODAL
+    // =====================================
+    function openBuyOptions() {
+      document.getElementById('buy-modal').classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeBuyOptions() {
+      document.getElementById('buy-modal').classList.add('hidden');
+      document.body.style.overflow = '';
+    }
+
+    document.getElementById('buy-modal').addEventListener('click', (e) => {
+      if (e.target === document.getElementById('buy-modal')) {
+        closeBuyOptions();
+      }
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeBuyOptions();
+    });
+  </script>
+
+</body>
+</html>
